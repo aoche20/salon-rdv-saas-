@@ -1,0 +1,19 @@
+from datetime import date
+from notifications.whatsapp import send_whatsapp_message
+from notifications.templates import appointment_reminder
+from .models import Appointment
+
+def send_daily_reminders():
+    today = date.today()
+
+    appointments = Appointment.objects.filter(
+        date=today,
+        status="CONFIRMED"
+    )
+
+    for appointment in appointments:
+        message = appointment_reminder(appointment)
+        send_whatsapp_message(
+            appointment.client_phone,
+            message
+        )
